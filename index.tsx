@@ -5,6 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {GoogleGenAI, Modality} from '@google/genai';
+import './input.css';
 
 // Fix: Define and use AIStudio interface for window.aistudio to resolve type conflict.
 // Define the aistudio property on the window object for TypeScript

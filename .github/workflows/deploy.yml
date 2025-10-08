@@ -26,9 +26,15 @@ jobs:
     - name: Build
       run: npm run build
       
+    - name: Copy public files
+      run: |
+        cp public/404.html dist/
+        cp public/index.html dist/
+      
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+        force_orphan: true
