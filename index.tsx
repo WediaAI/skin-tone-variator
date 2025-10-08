@@ -44,12 +44,9 @@ const generateButton = document.querySelector(
 const outputGalleryEl = document.querySelector(
   '#output-gallery',
 ) as HTMLDivElement;
-const demoButton = document.querySelector(
-  '#demo-button',
-) as HTMLButtonElement;
 
 const ETHNICITIES = [
-  'Noir',
+  'Afro-Américain',
   'Asiatique de l\'Est',
   'Asiatique du Sud',
   'Latino',
@@ -159,6 +156,32 @@ Votre seule modification concerne le teint de peau et les caractéristiques ethn
           statusBadge.style.display = 'none';
         }
         
+        // Ajouter un bouton de relance pour les images réussies
+        const retryButton = document.createElement('button');
+        retryButton.className = 'absolute bottom-2 right-3 w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 retry-btn';
+        retryButton.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+        `;
+        retryButton.title = 'Régénérer cette image';
+        retryButton.onclick = () => retryGeneration(ethnicity, galleryItem);
+        
+        // Ajouter un bouton de téléchargement
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'absolute bottom-2 right-14 w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 download-btn';
+        downloadButton.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        `;
+        downloadButton.title = 'Télécharger cette image';
+        downloadButton.onclick = () => downloadImage(imgEl.src, ethnicity);
+        
+        // Ajouter les boutons à la carte
+        galleryItem.appendChild(retryButton);
+        galleryItem.appendChild(downloadButton);
+        
         return;
       }
     }
@@ -204,7 +227,7 @@ Votre seule modification concerne le teint de peau et les caractéristiques ethn
       }
     }
     
-    // Mettre à jour le badge de statut avec l'erreur
+    // Mettre à jour le badge de statut avec l'erreur et ajouter un bouton retry
     if (statusBadge) {
       if (isQuotaError) {
         statusBadge.innerHTML = `
@@ -224,6 +247,38 @@ Votre seule modification concerne le teint de peau et les caractéristiques ethn
         statusBadge.className = 'px-3 py-1.5 bg-red-50/95 backdrop-blur-sm text-red-700 text-xs font-semibold rounded-full shadow-lg border border-red-200/50';
       }
     }
+    
+    // Ajouter un bouton de retry
+    const retryButton = document.createElement('button');
+    retryButton.className = 'absolute bottom-2 right-3 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 retry-btn';
+    retryButton.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+    `;
+    retryButton.title = 'Relancer la génération';
+    retryButton.onclick = () => retryGeneration(ethnicity, galleryItem);
+    
+    // Ajouter un bouton de téléchargement (même pour les échecs, au cas où il y aurait une image)
+    const downloadButton = document.createElement('button');
+    downloadButton.className = 'absolute bottom-2 right-14 w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 download-btn';
+    downloadButton.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+    `;
+    downloadButton.title = 'Télécharger cette image';
+    downloadButton.onclick = () => {
+      if (imgEl.src && imgEl.src !== '') {
+        downloadImage(imgEl.src, ethnicity);
+      } else {
+        alert('Aucune image à télécharger');
+      }
+    };
+    
+    // Ajouter les boutons à la carte
+    galleryItem.appendChild(retryButton);
+    galleryItem.appendChild(downloadButton);
     
     imgEl.classList.remove('animate-pulse');
     imgEl.classList.add('opacity-30');
@@ -340,6 +395,64 @@ function setupGallery() {
   }
 }
 
+// --- Fonction de retry pour un visuel spécifique ---
+async function retryGeneration(ethnicity: string, galleryItem: HTMLDivElement) {
+  console.log('Relance de la génération pour:', ethnicity);
+  
+  // Supprimer tous les boutons existants
+  const existingRetryBtns = galleryItem.querySelectorAll('.retry-btn');
+  const existingDownloadBtns = galleryItem.querySelectorAll('.download-btn');
+  existingRetryBtns.forEach(btn => btn.remove());
+  existingDownloadBtns.forEach(btn => btn.remove());
+  
+  // Réinitialiser l'état de la carte
+  const imgEl = galleryItem.querySelector('img') as HTMLImageElement;
+  const loadingIndicator = galleryItem.querySelector('.absolute.inset-0.flex') as HTMLDivElement;
+  const statusBadge = galleryItem.querySelector('.absolute.top-4.right-4 div') as HTMLDivElement;
+  const progressBar = galleryItem.querySelector('.bg-gradient-to-r') as HTMLDivElement;
+  const statusText = galleryItem.querySelector('.text-xs.text-slate-500') as HTMLSpanElement;
+  
+  // Réinitialiser l'image
+  imgEl.src = '';
+  imgEl.classList.add('animate-pulse');
+  imgEl.classList.remove('opacity-30');
+  
+  // Réafficher l'indicateur de chargement
+  if (loadingIndicator) {
+    loadingIndicator.style.display = 'flex';
+  }
+  
+  // Réinitialiser la barre de progression
+  if (progressBar) {
+    progressBar.style.width = '0%';
+    progressBar.className = 'bg-gradient-to-r from-slate-500 via-slate-600 to-blue-700 h-1.5 rounded-full transition-all duration-500';
+  }
+  
+  // Réinitialiser le badge de statut
+  if (statusBadge) {
+    statusBadge.innerHTML = `
+      <span class="flex items-center space-x-1">
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse"></div>
+        <span>Génération</span>
+      </span>
+    `;
+    statusBadge.className = 'px-3 py-1.5 bg-white/95 backdrop-blur-sm text-slate-700 text-xs font-semibold rounded-full shadow-lg border border-slate-200/50';
+  }
+  
+  // Réinitialiser le texte de statut
+  if (statusText) {
+    statusText.textContent = 'Génération en cours...';
+    statusText.className = 'text-xs text-slate-500';
+  }
+  
+  // Relancer la génération
+  try {
+    await generateSingleVariation(GEMINI_API_KEY, ethnicity, galleryItem);
+  } catch (error) {
+    console.error('Erreur lors du retry pour', ethnicity, error);
+  }
+}
+
 // --- Fonction plein écran ---
 function openFullscreen(ethnicity: string) {
   console.log('Tentative d ouverture plein ecran pour:', ethnicity);
@@ -441,6 +554,7 @@ function downloadImage(imageSrc: string, ethnicity: string) {
 (window as any).openFullscreen = openFullscreen;
 (window as any).closeFullscreen = closeFullscreen;
 (window as any).downloadImage = downloadImage;
+(window as any).retryGeneration = retryGeneration;
 
 // --- Event Listeners ---
 imageUploadEl.addEventListener('change', async () => {
@@ -490,7 +604,7 @@ function updateGenerateButtonState() {
 function initializeApp() {
   // Vérifier si la clé API est configurée
   if (GEMINI_API_KEY && GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE') {
-    statusEl.innerText = 'Application prête.';
+    statusEl.innerText = '';
   } else {
     statusEl.innerText = 'Clé API non configurée.';
   }
@@ -502,53 +616,3 @@ if (document.readyState === 'loading') {
 } else {
   initializeApp();
 }
-
-// Mode démo avec des images d'exemple
-demoButton.addEventListener('click', () => {
-  statusEl.innerText = 'Chargement du mode démo...';
-  setupGallery();
-  
-  // Simuler des images d'exemple (placeholder)
-  const galleryItems = Array.from(outputGalleryEl.children) as HTMLDivElement[];
-  
-  galleryItems.forEach((item, index) => {
-    const imgEl = item.querySelector('img') as HTMLImageElement;
-    const labelEl = item.querySelector('p') as HTMLParagraphElement;
-    
-    // Créer une image de démonstration avec un dégradé de couleur
-    const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 200;
-    const ctx = canvas.getContext('2d')!;
-    
-    // Créer un dégradé basé sur l'ethnicité
-    const colors = [
-      '#8B4513', // Noir - brun foncé
-      '#F4A460', // Asiatique de l'Est - beige
-      '#DEB887', // Asiatique du Sud - brun clair
-      '#CD853F', // Latino - brun moyen
-      '#D2B48C', // Moyen-Oriental - tan
-      '#F5DEB3'  // Blanc - beige clair
-    ];
-    
-    const gradient = ctx.createLinearGradient(0, 0, 200, 200);
-    gradient.addColorStop(0, colors[index]);
-    gradient.addColorStop(1, '#FFFFFF');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 200, 200);
-    
-    // Ajouter du texte
-    ctx.fillStyle = '#333';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Mode Démo', 100, 100);
-    ctx.fillText(ETHNICITIES[index], 100, 120);
-    
-    imgEl.src = canvas.toDataURL();
-    imgEl.classList.remove('animate-pulse');
-    labelEl.innerHTML = `<span class="text-blue-500 text-xs">Démo</span>`;
-  });
-  
-  statusEl.innerText = 'Mode démo activé - Images d\'exemple affichées.';
-});
