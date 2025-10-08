@@ -30,6 +30,12 @@ jobs:
       run: |
         cp public/404.html dist/
         cp public/index.html dist/
+        
+    - name: Fix MIME types
+      run: |
+        echo "*.js    application/javascript" > dist/.htaccess
+        echo "*.mjs   application/javascript" >> dist/.htaccess
+        echo "*.css   text/css" >> dist/.htaccess
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
