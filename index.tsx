@@ -154,15 +154,9 @@ Votre seule modification concerne le teint de peau et les caractéristiques ethn
           statusText.className = 'text-xs text-green-600 font-medium';
         }
         
-        // Mettre à jour le badge de statut
+        // Masquer le badge de statut
         if (statusBadge) {
-          statusBadge.innerHTML = `
-            <span class="flex items-center space-x-1">
-              <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-              <span>Terminé</span>
-            </span>
-          `;
-          statusBadge.className = 'px-3 py-1.5 bg-green-50/95 backdrop-blur-sm text-green-700 text-xs font-semibold rounded-full shadow-lg border border-green-200/50';
+          statusBadge.style.display = 'none';
         }
         
         return;
@@ -296,8 +290,8 @@ function setupGallery() {
       'group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 border border-slate-200/50 backdrop-blur-sm';
     galleryItem.innerHTML = `
       <!-- Image container avec effet glassmorphism -->
-      <div class="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50">
-        <img src="" alt="Image générée pour ${ethnicity}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-1000 ease-out"/>
+      <div class="aspect-[4/5] relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50">
+        <img src="" alt="Image générée pour ${ethnicity}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000 ease-out"/>
         
         <!-- Overlay avec effet de brillance -->
         <div class="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -315,7 +309,7 @@ function setupGallery() {
         </div>
         
         <!-- Bouton plein écran -->
-        <button class="absolute top-3 left-3 w-10 h-10 bg-white/90 fullscreen-btn rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110" onclick="openFullscreen('${ethnicity}')" title="Voir en plein écran">
+        <button class="absolute top-3 left-3 w-10 h-10 bg-white/90 fullscreen-btn rounded-full flex items-center justify-center shadow-lg opacity-100 transition-all duration-300 hover:bg-white hover:scale-110" onclick="openFullscreen('${ethnicity.replace(/'/g, "\\'")}')" title="Voir en plein écran">
           <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
           </svg>
@@ -326,24 +320,10 @@ function setupGallery() {
       </div>
       
       <!-- Contenu de la carte -->
-      <div class="p-6 bg-white">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold text-gray-800">${ethnicity}</h3>
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></div>
-            <span class="text-xs text-slate-500 font-medium">En cours</span>
-          </div>
+      <div class="p-4 bg-white">
+        <div class="text-center">
+          <h3 class="text-sm font-semibold text-gray-800">${ethnicity}</h3>
         </div>
-        
-        <!-- Barre de progression -->
-        <div class="w-full bg-slate-200 rounded-full h-1.5 mb-4">
-          <div class="bg-gradient-to-r from-slate-500 to-blue-600 h-1.5 rounded-full animate-pulse" style="width: 0%"></div>
-        </div>
-        
-        <!-- Description -->
-        <p class="text-sm text-gray-600 leading-relaxed">
-          Variation de teint de peau pour représenter l'ethnicité ${ethnicity.toLowerCase()}
-        </p>
       </div>
       
       <!-- Badge de statut flottant -->
@@ -362,20 +342,28 @@ function setupGallery() {
 
 // --- Fonction plein écran ---
 function openFullscreen(ethnicity: string) {
+  console.log('Tentative d ouverture plein ecran pour:', ethnicity);
+  console.log('Fonction openFullscreen appelee');
+  
   // Trouver l'image correspondante
   const galleryItems = document.querySelectorAll('#output-gallery > div');
+  console.log('Nombre d elements de galerie trouves:', galleryItems.length);
+  
   let targetImage: HTMLImageElement | null = null;
   
   for (const item of galleryItems) {
     const title = item.querySelector('h3')?.textContent;
+    console.log('Titre trouve:', title, 'Recherche:', ethnicity);
     if (title === ethnicity) {
       targetImage = item.querySelector('img') as HTMLImageElement;
+      console.log('Image trouvee:', targetImage?.src);
       break;
     }
   }
   
-  if (!targetImage || !targetImage.src) {
-    alert('Image non disponible');
+  if (!targetImage || !targetImage.src || targetImage.src === '') {
+    console.log('Image non trouvee ou vide');
+    alert('Image non disponible ou pas encore generee');
     return;
   }
   

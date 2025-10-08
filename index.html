@@ -27,42 +27,24 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body class="bg-gradient-to-br from-slate-50 to-blue-50 font-['Inter'] text-gray-800 antialiased">
-    <!-- Header avec logo Kiabi -->
-    <header class="bg-white shadow-lg border-b-2 border-slate-200">
-      <div class="max-w-7xl mx-auto px-6 py-6">
-        <div class="flex items-center justify-center">
-          <div class="flex items-center space-x-6">
-            <!-- Logo Kiabi officiel -->
-            <div class="transform hover:scale-105 transition-transform duration-300">
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Kiabi_logo.svg/200px-Kiabi_logo.svg.png" 
-                alt="Logo Kiabi" 
-                class="h-16 w-auto"
-              />
-            </div>
-            <div class="text-center">
-              <h1 class="text-3xl font-black text-gray-800 tracking-tight">Kiabi</h1>
-              <p class="text-lg font-medium text-slate-600">Variateur de Teint de Peau</p>
-              <div class="flex items-center justify-center mt-1 space-x-2">
-                <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
-                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <!-- Logo Kiabi centré -->
+    <div class="flex justify-center pt-8 pb-4">
+      <img 
+        src="./logo-kiabi.png" 
+        alt="Logo Kiabi" 
+        class="h-20 w-auto opacity-90 hover:opacity-100 transition-opacity duration-300"
+      />
+    </div>
 
     <main
       class="min-h-screen flex items-center justify-center p-4 pt-8"
       role="main"
     >
       <div
-        class="bg-white p-8 rounded-2xl shadow-xl border border-pink-100 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8"
+        class="bg-white p-8 rounded-2xl shadow-xl border border-pink-100 w-full max-w-8xl"
       >
         <!-- Left Column: Controls & Original Image -->
-        <div class="flex flex-col space-y-6">
+        <div class="flex flex-col space-y-4 mb-8 lg:mb-0 lg:w-1/4 lg:float-left lg:pr-8">
           <div class="text-center lg:text-left">
             <h1 class="text-3xl font-bold text-gray-800 tracking-tight">
               Variateur de Teint de Peau
@@ -73,7 +55,7 @@
             </p>
           </div>
 
-          <div class="flex-grow flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50 border-2 border-dashed border-slate-300 rounded-3xl p-12 text-center hover:border-slate-400 hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+          <div class="flex-grow flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50 border-2 border-dashed border-slate-300 rounded-3xl p-8 text-center hover:border-slate-400 hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
             <!-- Effet de fond animé -->
             <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             
@@ -98,21 +80,6 @@
                 <span class="text-sm text-gray-500">ou cliquez pour parcourir vos fichiers</span>
               </p>
               
-              <!-- Badges de formats avec animation -->
-              <div class="flex flex-wrap justify-center gap-3">
-                <span class="px-4 py-2 bg-slate-100 text-slate-700 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">PNG</span>
-                <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">JPG</span>
-                <span class="px-4 py-2 bg-slate-100 text-slate-700 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">WEBP</span>
-                <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">GIF</span>
-              </div>
-              
-              <!-- Indicateur de taille -->
-              <div class="mt-6 text-xs text-gray-500">
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Taille recommandée : 1024x1024px max
-              </div>
             </label>
           </div>
 
@@ -165,7 +132,7 @@
         </div>
 
         <!-- Right Column: Generated Images Gallery -->
-        <div class="space-y-8">
+        <div class="space-y-8 lg:w-3/4 lg:float-right">
           <div class="text-center">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-600 to-blue-700 rounded-2xl mb-4 shadow-lg">
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,11 +145,14 @@
           
           <div
             id="output-gallery"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[500px]"
+            class="grid grid-cols-3 gap-6 min-h-[600px]"
           >
             <!-- Gallery items will be injected here -->
           </div>
         </div>
+        
+        <!-- Clearfix pour les floats -->
+        <div class="clear-both"></div>
       </div>
     </main>
 
